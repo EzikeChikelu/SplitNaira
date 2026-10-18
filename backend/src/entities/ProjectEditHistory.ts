@@ -12,7 +12,7 @@ export class ProjectEditHistory {
   id!: string;
 
   @Column({ name: "project_id", type: "varchar", length: 64 })
-  @Index()
+  @Index("IDX_project_edit_history_project_id")
   projectId!: string;
 
   @Column({ type: "varchar", length: 128 })

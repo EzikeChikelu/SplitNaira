@@ -4,17 +4,19 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  Index
+  Index,
+  Unique
 } from "typeorm";
 import { DEFAULT_USER_ROLE } from "../lib/user-roles.js";
 import type { UserRole } from "../lib/user-roles.js";
 
 @Entity("users")
+@Unique("UQ_users_walletAddress", ["walletAddress"])
 export class User {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({ unique: true, type: "varchar", length: 128 })
+  @Column({ type: "varchar", length: 128 })
   walletAddress!: string;
 
   @Index("IDX_users_email")

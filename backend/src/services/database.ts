@@ -14,6 +14,20 @@ import { Notification } from "../entities/Notification.js";
 import { ProjectEditHistory } from "../entities/ProjectEditHistory.js";
 import { logger } from "./logger.js";
 
+/** Every entity the app persists. A file in src/entities missing here is a schema convention violation. */
+export const ENTITIES = [
+  User,
+  TransactionRecord,
+  ServiceState,
+  AuditLog,
+  LedgerBlock,
+  SplitCancellation,
+  ProjectArchival,
+  NotificationPreference,
+  Notification,
+  ProjectEditHistory,
+];
+
 let AppDataSource: DataSource | null = null;
 let initializationPromise: Promise<DataSource> | null = null;
 
@@ -194,14 +208,25 @@ export async function withTransaction<T>(
   }
 }
 
+/**
+ * Close the pool on shutdown (Issue #1471).
+ *
+ * The data source is unregistered *before* `destroy()` runs, so a request that
+ * arrives mid-shutdown fails fast with "Database not initialized" instead of
+ * checking a connection out of a pool that is being torn down. If `destroy()`
+ * rejects, the error still propagates, but module state is already cleared so
+ * a later `initDatabase()` starts from a fresh pool.
+ */
 export async function closeDatabase(): Promise<void> {
   if (initializationPromise && !AppDataSource?.isInitialized) {
     try { await initializationPromise; } catch { /* ignore */ }
   }
-  if (AppDataSource?.isInitialized) {
-    await AppDataSource.destroy();
-    logger.info("Database connection closed");
-  }
+  const dataSource = AppDataSource;
   AppDataSource = null;
   initializationPromise = null;
+
+  if (dataSource?.isInitialized) {
+    await dataSource.destroy();
+    logger.info("Database connection closed");
+  }
 }

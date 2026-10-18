@@ -4,6 +4,7 @@ import {
   Entity,
   Index,
   PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
 
 export const TRANSACTION_STATUSES = ["pending", "completed", "failed"] as const;
@@ -14,6 +15,7 @@ export const TRANSACTION_AMOUNT_CHECK_NAME = "CHK_transactions_amount_valid";
 export const TRANSACTION_AMOUNT_CHECK = `CASE WHEN "amount" ~ '^(0|[1-9][0-9]{0,38})([.][0-9]{1,7})?$' THEN "amount"::numeric <= 170141183460469231731687303715884105727 ELSE false END`;
 
 @Entity("transactions")
+@Unique("UQ_transactions_txHash", ["txHash"])
 @Check(TRANSACTION_AMOUNT_CHECK_NAME, TRANSACTION_AMOUNT_CHECK)
 @Index("IDX_transactions_round_id", ["roundId"])
 @Index("IDX_transactions_recipient", ["recipient"])
@@ -49,7 +51,7 @@ export class TransactionRecord {
   timestamp!: number;
 
   @Index("IDX_transactions_tx_hash", { unique: true })
-  @Column({ type: "varchar", length: 128, unique: true })
+  @Column({ type: "varchar", length: 128 })
   txHash!: string;
 
   @Column({

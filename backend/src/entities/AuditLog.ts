@@ -12,7 +12,7 @@ export class AuditLog {
   id!: string;
 
   @Column({ type: "varchar", length: 128 })
-  @Index()
+  @Index("IDX_audit_log_action")
   action!: string;
 
   @CreateDateColumn({ name: "performed_at", type: "timestamptz" })

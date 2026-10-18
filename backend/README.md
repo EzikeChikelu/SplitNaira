@@ -122,6 +122,10 @@ The backend includes comprehensive production-grade hardening:
 - [`../docs/PLATFORM_HARDENING_IMPLEMENTATION.md`](../docs/PLATFORM_HARDENING_IMPLEMENTATION.md) — implementation details, monitoring, and rollback
 - [`../docs/PLATFORM_HARDENING_DEPLOYMENT_CHECKLIST.md`](../docs/PLATFORM_HARDENING_DEPLOYMENT_CHECKLIST.md) — operator checklist for safe deployment
 - [`../docs/backend-release-ops-wave5.md`](../docs/backend-release-ops-wave5.md) — deployment procedures and CI commands
+- [`../docs/database-schema-conventions.md`](../docs/database-schema-conventions.md) — entity naming, indexes, constraints, migration review (enforced by `schema-conventions.test.ts`)
+- [`../docs/database-connection-lifecycle.md`](../docs/database-connection-lifecycle.md) — connection release guarantees on failure and shutdown
+- [`../docs/collaboration-concurrency.md`](../docs/collaboration-concurrency.md) — isolation requirements for membership and role changes
+- [`../docs/ledger-transaction-finality.md`](../docs/ledger-transaction-finality.md) — per-network confirmation assumptions and finality transitions
 
 ### Transaction Safety Example
 
@@ -146,6 +150,10 @@ Run tests to verify hardening:
 ```bash
 npm test -- error-scenarios.test.ts    # Validation & error handling
 npm test -- transaction-safety.test.ts # Database transaction rollback
+npm test -- database-connection-leak     # Connection release on failure/shutdown
+npm test -- schema-conventions           # Entity + migration naming rules
+npm test -- membership-isolation         # Concurrent collaborator changes
+npm test -- ledger-finality              # Per-network finality policy
 npm test                                # All tests
 ```
 
